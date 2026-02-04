@@ -26,4 +26,4 @@ COPY --from=builder /app/loki-mcp-server .
 EXPOSE 8080
 
 # Set the entry point
-ENTRYPOINT ["./loki-mcp-server"]
+ENTRYPOINT ["./loki-mcp-server", "--transport", "sse", "--address", "0.0.0.0:8000"]
