@@ -45,10 +45,10 @@ func main() {
 	}
 
 	// Create SSE server for legacy SSE connections
-	sseServer := server.NewSSEServer(s,
-		server.WithSSEEndpoint("/sse"),
-		server.WithMessageEndpoint("/mcp"),
-	)
+	// sseServer := server.NewSSEServer(s,
+	// 	server.WithSSEEndpoint("/sse"),
+	// 	server.WithMessageEndpoint("/mcp"),
+	// )
 
 	// Create Streamable HTTP server
 	streamableServer := server.NewStreamableHTTPServer(s)
@@ -57,11 +57,11 @@ func main() {
 	mux := http.NewServeMux()
 
 	// Register SSE endpoints (legacy support)
-	mux.Handle("/sse", sseServer) // SSE event stream
-	mux.Handle("/mcp", sseServer) // SSE message endpoint
+	//mux.Handle("/sse", sseServer) // SSE event stream
+	//mux.Handle("/mcp", sseServer) // SSE message endpoint
 
 	// Register Streamable HTTP endpoint
-	mux.Handle("/stream", streamableServer) // Streamable HTTP endpoint
+	mux.Handle("/mcp", streamableServer) // Streamable HTTP endpoint
 
 	// Create a channel to handle shutdown signals
 	stop := make(chan os.Signal, 1)
@@ -70,10 +70,10 @@ func main() {
 	// Start unified HTTP server
 	go func() {
 		addr := fmt.Sprintf(":%s", port)
-		log.Printf("Starting unified MCP server on http://localhost%s", addr)
-		log.Printf("SSE Endpoint (legacy): http://localhost%s/sse", addr)
-		log.Printf("SSE Message Endpoint: http://localhost%s/mcp", addr)
-		log.Printf("Streamable HTTP Endpoint: http://localhost%s/stream", addr)
+		//log.Printf("Starting unified MCP server on http://localhost%s", addr)
+		//log.Printf("SSE Endpoint (legacy): http://localhost%s/sse", addr)
+		//log.Printf("SSE Message Endpoint: http://localhost%s/mcp", addr)
+		log.Printf("Streamable HTTP Endpoint: http://localhost%s/mcp", addr)
 
 		if err := http.ListenAndServe(addr, mux); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("HTTP server error: %v", err)
@@ -81,12 +81,12 @@ func main() {
 	}()
 
 	// For backward compatibility, also serve via stdio
-	go func() {
-		log.Println("Starting stdio server")
-		if err := server.ServeStdio(s); err != nil {
-			log.Printf("Stdio server error: %v", err)
-		}
-	}()
+	// go func() {
+	// 	log.Println("Starting stdio server")
+	// 	if err := server.ServeStdio(s); err != nil {
+	// 		log.Printf("Stdio server error: %v", err)
+	// 	}
+	// }()
 
 	// Wait for interrupt signal
 	<-stop
