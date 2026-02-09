@@ -25,5 +25,7 @@ COPY --from=builder /app/loki-mcp-server .
 # Expose port for unified MCP server (both SSE and Streamable HTTP)
 EXPOSE 8000
 
+RUN ls -lrt && cat ./loki-mcp-server
+
 # Set the entry point
 ENTRYPOINT ["./loki-mcp-server", "--transport", "sse", "--address", "0.0.0.0:8000"]
